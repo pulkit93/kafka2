@@ -1,0 +1,110 @@
+name=HttpSinkConnector
+connector.class=uk.co.threefi.connect.http.HttpSinkConnector
+headers=Content-Type:application/json
+topics=kafka-accounts
+tasks.max=1
+http.api.url=http://127.0.0.1:8443/api/v1/accounts
+regex.patterns=Struct~=
+regex.replacements=~:
+
+
+
+{
+  "name": "HttpSinkConnector",
+  "connector.class": "uk.co.threefi.connect.http.HttpSinkConnector",
+  "regex.replacements": "~:",
+  "headers": "Content-Type:application/json",
+  "topics": "kafka-accounts",
+  "tasks.max": "1",
+  "http.api.url": "http://127.0.0.1:8443/api/v1/accounts",
+  "regex.patterns": "Struct~="
+}
+
+
+
+
+name=JdbcSinkConnector
+connector.class=io.confluent.connect.jdbc.JdbcSinkConnector
+connection.password=postgres
+tasks.max=1
+topics=incident
+auto.evolve=true
+connection.user=postgres
+auto.create=true
+value.converter=org.apache.kafka.connect.json.JsonConverter
+connection.url=jdbc:postgresql://localhost:5432/postgres
+insert.mode=upsert
+key.converter=org.apache.kafka.connect.json.JsonConverter
+pk.mode=kafka
+pk.fields=__connect_topic,__connect_partition,__connect_offset
+
+
+name=sink-postgres-test
+connector.class=io.confluent.connect.jdbc.JdbcSinkConnector
+connection.password=postgres
+tasks.max=1
+topics=kafka-test
+auto.evolve=true
+connection.user=postgres
+auto.create=true
+value.converter=org.apache.kafka.connect.json.JsonConverter
+connection.url=jdbc:postgresql://localhost:5430/postgres
+insert.mode=upsert
+key.converter=org.apache.kafka.connect.json.JsonConverter
+pk.mode=kafka
+pk.fields=__connect_topic,__connect_partition,__connect_offset
+
+
+name=SNowSourceConnector
+connector.class=com.elya.kafka.SNowSourceConnector
+tasks.max=1
+topic=incident
+since.timestamp=2018-01-14 02:46:44
+table=incident
+
+name=source-postgres-test
+connector.class=io.confluent.connect.jdbc.JdbcSourceConnector
+incrementing.column.name=id
+connection.password=postgres
+validate.non.null=true
+tasks.max=1
+connection.attempts=3
+batch.max.rows=100
+connection.backoff.ms=10000
+timestamp.delay.interval.ms=0
+table.types=TABLE
+table.poll.interval.ms=60000
+mode=incrementing
+topic.prefix=kafka-
+connection.user=postgres
+poll.interval.ms=5000
+connection.url=jdbc:postgresql://localhost:5431/postgres
+value.converter=org.apache.kafka.connect.json.JsonConverter
+numeric.precision.mapping=false
+key.converter=org.apache.kafka.connect.json.JsonConverter
+
+
+
+
+
+
+name=HttpSinkConnector
+connector.class=uk.co.threefi.connect.http.HttpSinkConnector
+headers=Content-Type:application/json
+topics=SNowAlerts
+tasks.max=1
+http.api.url=http://127.0.0.1:8443/api/v1/alerts
+
+
+
+table=incident
+name=SNowSourceConnector
+tasks.max=1
+alert.topic=SNowAlerts
+ticket.topic=SNowTickets
+connector.class=com.elya.kafka.SNowSourceConnector
+since.timestamp=2012-01-14 02:46:44
+instance=dev61741
+auth.user=admin
+auth.password=hello
+batch.size=10
